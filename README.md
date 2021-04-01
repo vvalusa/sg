@@ -1,4 +1,4 @@
-# AWS EC2-VPC Security Group Terraform module
+# Security Group Terraform module
 
 ## Requirements
 
