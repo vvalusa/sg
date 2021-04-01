@@ -18,9 +18,9 @@
 No modules.
 
 ## Resources
-	| Name |
-	|------|
-	| [aws_security_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) |
+| Name | Type |
+|------|------|
+| [aws_security_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 
 ## Usage
 Three different type of groups we created  	i.e. open to public access, open to VPC traffic and DB security groups.
