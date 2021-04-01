@@ -23,7 +23,7 @@ We will create three different type of groups i.e. open to public access, open t
 
 ### Security group with custom rules
 
-create main.tf for security groups.
+Create main.tf for security groups.
 
 ```hcl
 locals {
