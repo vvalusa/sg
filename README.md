@@ -17,9 +17,13 @@
 
 No modules.
 
+## Usage
+
+We will create three different type of groups i.e. open to public access, open to VPC traffic and DB security groups.
+
 ### Security group with custom rules
 
-Let’s create main.tf for security groups.
+create main.tf for security groups.
 
 ```hcl
 locals {
