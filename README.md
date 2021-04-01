@@ -17,9 +17,13 @@
 
 No modules.
 
-## Usage
+## Resources
+	| Name |
+	|------|
+	| [aws_security_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) |
 
-We will create three different type of groups i.e. open to public access, open to VPC traffic and DB security groups.
+## Usage
+Three different type of groups we created  	i.e. open to public access, open to VPC traffic and DB security groups.
 
 ### Security group with custom rules
 
@@ -175,6 +179,12 @@ variable "private_subnets" {
     type = list
 }
 ```
+
+
+## Outputs
+	| Name | Description |
+	|------|-------------|
+	| id | The ID of the security group|
 
 
 
