@@ -23,7 +23,8 @@ No modules.
 | [aws_security_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 
 ## Usage
-Three different type of groups we created  	i.e. open to public access, open to VPC traffic and DB security groups.
+
+Here is examples of how you can use this module, we created 3 different type of groups  i.e. open to public access, open to VPC traffic and DB security groups.
 
 ### Security group with custom rules
 
