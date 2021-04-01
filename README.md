@@ -182,11 +182,6 @@ variable "private_subnets" {
 
 
 ## Outputs
-	| Name | Description |
-	|------|-------------|
-	| id | The ID of the security group|
-
-## Outputs
 
 | Name | Description |
 |------|-------------|
