@@ -169,15 +169,19 @@ variable "region" {
 
 variable "vpc_cidr" {
     type = string
+    default = "10.1.X.X/16"
 }
 variable "vpc_id" {
     type = string
+    default =  "vpc-XXXXXXXXXXXX"
 }
 variable "public_subnets" {
     type = list
+    default = ["10.1.X.X/19", "10.1.X.X/19"]
 }
 variable "private_subnets" {
     type = list
+    default = ["10.1.X.X/19", "10.1.X.X/19"]
 }
 ```
 
