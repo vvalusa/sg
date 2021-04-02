@@ -29,7 +29,7 @@ Here is examples of how you can use this module, we created 3 different type of 
 
 ### Security group with custom rules
 
-Create main.tf for security groups.
+
 
 ```hcl
 # Configure the AWS Provider
@@ -194,7 +194,7 @@ module "sg_k8s" {
 
 ```
 
-We also need a variables.tf
+variables.tf
 
 ```hcl
 #####################################################
