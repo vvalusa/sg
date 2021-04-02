@@ -2,41 +2,47 @@
 
 ## Requirements
 
-| Name | Version |
-|------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13|
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 3.0 |
+| Name                                                                     | Version |
+| ------------------------------------------------------------------------ | ------- |
+| <a name="requirement_terraform"></a> [terraform](#requirement_terraform) | >= 0.13 |
+| <a name="requirement_aws"></a> [aws](#requirement_aws)                   | >= 3.0  |
 
 ## Providers
 
-| Name | Version |
-|------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 3.0 |
+| Name                                             | Version |
+| ------------------------------------------------ | ------- |
+| <a name="provider_aws"></a> [aws](#provider_aws) | >= 3.0  |
 
 ## Modules
 
 No modules.
 
 ## Resources
-| Name | Type |
-|------|------|
+
+| Name                                                                                                             | Type     |
+| ---------------------------------------------------------------------------------------------------------------- | -------- |
 | [aws_security_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 
 ## Usage
 
-Here is examples of how you can use this module, we created 3 different type of groups  i.e. open to public access, open to VPC traffic and DB security groups.
+Here is examples of how you can use this module, we created 3 different type of groups i.e. open to public access, open to VPC traffic and DB security groups.
 
 ### Security group with custom rules
 
 Create main.tf for security groups.
 
 ```hcl
+# Configure the AWS Provider
+provider "aws" {
+  region = "ap-south-1"
+}
+
 locals {
     vpc_cidr = var.vpc_cidr
     vpc_id = var.vpc_id
     public_subnets = var.public_subnets
     private_subnets = var.private_subnets
-    
+
     nginx_service = {
         ingress = [
             {
@@ -83,6 +89,26 @@ locals {
             ]
         egress =[]
     }
+    k8s_cluster = {
+        ingress = [
+            {
+                description = "k8s instances security groups"
+                cidr_blocks = ["0.0.0.0/0"]
+                from_port = 31000
+                to_port = 32000
+                protocol = "tcp"
+            },
+                {
+                description = "k8s instances security groups for public"
+                cidr_blocks = []
+                from_port = 5555
+                to_port = 5555
+                protocol = "tcp"
+                }
+
+            ]
+        egress =[]
+    }
     internal = {
         ingress = [
             {
@@ -121,34 +147,49 @@ locals {
 
 
 module "sg_public" {
-    source = "git::https://github.com/kumargaurav522/sg.git"
+    source = "../sg/"
     vpc_cidr = local.vpc_cidr
     vpc_id = local.vpc_id
     ingress = local.nginx_service.ingress
     egress = local.nginx_service.egress
     name = "Public security group"
     description = "Public secuirty group"
+    tags = "nginx_service"
 }
 
 
 module "sg_rds" {
-    source = "git::https://github.com/kumargaurav522/sg.git"
+    source = "../sg/"
     vpc_cidr = local.vpc_cidr
     vpc_id = local.vpc_id
     ingress = local.rds_cluster.ingress
     egress = local.rds_cluster.egress
     name = "RDS security group"
     description = "RDS secuirty group"
+    tags = "sg_rd"
+    security_groups = ["sg-035962aecd67c9ec3"]
 }
 
 module "sg_internal" {
-    source = "git::https://github.com/kumargaurav522/sg.git"
+    source = "../sg/"
     vpc_cidr = local.vpc_cidr
     vpc_id = local.vpc_id
     ingress = local.internal.ingress
     egress = local.internal.egress
     name = "Private security group"
     description = "Private secuirty group"
+    tags = "sg_internal"
+}
+module "sg_k8s" {
+    source = "../sg/"
+    vpc_cidr = local.vpc_cidr
+    vpc_id = local.vpc_id
+    ingress = local.k8s_cluster.ingress
+    egress = local.k8s_cluster.egress
+    name = "kubernates security group"
+    description = "kubernates secuirty group"
+    tags = "sg_k8s"
+    security_groups = ["sg-035962aecd67c9ec3"]
 }
 
 ```
@@ -185,15 +226,8 @@ variable "private_subnets" {
 }
 ```
 
-
 ## Outputs
 
-| Name | Description |
-|------|-------------|
-| <a name="id"></a> [id](#output\_id) | The ID of the security group |
-
-
-
-
-
-
+| Name                               | Description                  |
+| ---------------------------------- | ---------------------------- |
+| <a name="id"></a> [id](#output_id) | The ID of the security group |
