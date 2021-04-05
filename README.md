@@ -95,7 +95,7 @@ module "sg_rds" {
       to_port         = 3306
       protocol        = "tcp"
       cidr_blocks     = []
-      security_groups = ["sg-035962aecd67c9ec3"]
+      security_groups = ["sg-035962aecd67def34"]
     }
   }
   egress = {
@@ -113,7 +113,7 @@ module "sg_rds" {
   tags        = "rds_sg"
 }
 
-```hcl
+```
 
 
 
