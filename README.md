@@ -25,8 +25,8 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_description"></a> [description](#input\_description) | Description of Security group | `string` | n/a | yes |
-| <a name="input_egress"></a> [egress](#input\_egress) | List of egress rules | <pre>map(object({<br>    from_port       = number<br>    to_port         = number<br>    protocol        = string<br>    cidr_blocks     = list(string)<br>    description     = string<br>    security_groups = list(string)<br><br>  }))</pre> | `{}` | no |
-| <a name="input_ingress"></a> [ingress](#input\_ingress) | List of ingress rules | <pre>map(object({<br>    from_port       = number<br>    to_port         = number<br>    protocol        = string<br>    cidr_blocks     = list(string)<br>    description     = string<br>    security_groups = list(string)<br><br>  }))</pre> | `{}` | no |
+| <a name="input_egress"></a> [egress](#input\_egress) | List of egress rules | <pre>map(object({<br>    from_port       = number<br>    to_port         = number<br>    protocol        = string<br>    cidr_blocks     = list(string)<br>    description     = string<br>    security_groups = list(string)<br><br>  }))</pre> | n/a | yes |
+| <a name="input_ingress"></a> [ingress](#input\_ingress) | List of ingress rules | <pre>map(object({<br>    from_port       = number<br>    to_port         = number<br>    protocol        = string<br>    cidr_blocks     = list(string)<br>    description     = string<br>    security_groups = list(string)<br><br>  }))</pre> | n/a | yes |
 | <a name="input_name"></a> [name](#input\_name) | Name of Security group | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Mention the tags | `any` | n/a | yes |
 | <a name="input_vpc_cidr"></a> [vpc\_cidr](#input\_vpc\_cidr) | CIDR block for the VPC | `string` | n/a | yes |
@@ -36,5 +36,5 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_arn"></a> [arn](#output\_arn) | n/a |
-| <a name="output_id"></a> [id](#output\_id) | n/a |
+| <a name="output_arn"></a> [arn](#output\_arn) | The ARN of the security group |
+| <a name="output_id"></a> [id](#output\_id) | The ID of the security group |

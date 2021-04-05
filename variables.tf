@@ -35,7 +35,6 @@ variable "ingress" {
 
   }))
   description = "List of ingress rules"
-  default     = {}
 }
 
 variable "egress" {
@@ -49,6 +48,5 @@ variable "egress" {
 
   }))
   description = "List of egress rules"
-  default     = {}
 }
 
