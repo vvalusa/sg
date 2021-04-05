@@ -18,25 +18,37 @@ variable "description" {
   description = "Description of Security group"
 }
 
-variable "ingress" {
-  type        = any
-  description = "List of ingress rules"
-}
 
 variable "tags" {
   type        = any
   description = "Mention the tags"
 }
 
+variable "ingress" {
+  type = map(object({
+    from_port       = number
+    to_port         = number
+    protocol        = string
+    cidr_blocks     = list(string)
+    description     = string
+    security_groups = list(string)
 
-variable "egress" {
-  type        = any
-  description = "List of egress rules"
+  }))
+  description = "List of ingress rules"
+  default     = {}
 }
 
-variable "security_groups" {
-  type        = list(string)
-  description = "Add security groups id"
-  default     = []
+variable "egress" {
+  type = map(object({
+    from_port       = number
+    to_port         = number
+    protocol        = string
+    cidr_blocks     = list(string)
+    description     = string
+    security_groups = list(string)
+
+  }))
+  description = "List of egress rules"
+  default     = {}
 }
 
