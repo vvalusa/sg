@@ -19,11 +19,6 @@ variable "description" {
 }
 
 
-variable "tags" {
-  type        = any
-  description = "Mention the tags"
-}
-
 variable "ingress" {
   type = map(object({
     from_port       = number
@@ -49,4 +44,11 @@ variable "egress" {
   }))
   description = "List of egress rules"
 }
+
+variable "tags" {
+  description = "A mapping of tags to assign to security group"
+  type        = map(string)
+  default     = {}
+}
+
 

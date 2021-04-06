@@ -28,8 +28,11 @@ resource "aws_security_group" "security_group" {
 
     }
   }
-  tags = {
-    Name = var.tags
-  }
+  tags = merge(
+    {
+      "Name" = format("%s", var.name)
+    },
+    var.tags,
+  )
 
 }
