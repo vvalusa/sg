@@ -1,17 +1,14 @@
-# Security Group Terraform module
-
 ## Requirements
 
-| Name                                                                     | Version |
-| ------------------------------------------------------------------------ | ------- |
-| <a name="requirement_terraform"></a> [terraform](#requirement_terraform) | >= 0.13 |
-| <a name="requirement_aws"></a> [aws](#requirement_aws)                   | >= 3.0  |
+| Name | Version |
+|------|---------|
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | 3.35.0 |
 
 ## Providers
 
-| Name                                             | Version |
-| ------------------------------------------------ | ------- |
-| <a name="provider_aws"></a> [aws](#provider_aws) | >= 3.0  |
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 3.35.0 |
 
 ## Modules
 
@@ -19,215 +16,110 @@ No modules.
 
 ## Resources
 
-| Name                                                                                                             | Type     |
-| ---------------------------------------------------------------------------------------------------------------- | -------- |
-| [aws_security_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
+| Name | Type |
+|------|------|
+| [aws_security_group.security_group](https://registry.terraform.io/providers/hashicorp/aws/3.35.0/docs/resources/security_group) | resource |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_description"></a> [description](#input\_description) | Description of Security group | `string` | n/a | yes |
+| <a name="input_egress"></a> [egress](#input\_egress) | List of egress rules | <pre>map(object({<br>    from_port       = number<br>    to_port         = number<br>    protocol        = string<br>    cidr_blocks     = list(string)<br>    description     = string<br>    security_groups = list(string)<br><br>  }))</pre> | n/a | yes |
+| <a name="input_ingress"></a> [ingress](#input\_ingress) | List of ingress rules | <pre>map(object({<br>    from_port       = number<br>    to_port         = number<br>    protocol        = string<br>    cidr_blocks     = list(string)<br>    description     = string<br>    security_groups = list(string)<br><br>  }))</pre> | n/a | yes |
+| <a name="input_name"></a> [name](#input\_name) | Name of Security group | `string` | n/a | yes |
+| <a name="input_tags"></a> [tags](#input\_tags) | Mention the tags | `any` | n/a | yes |
+| <a name="input_vpc_cidr"></a> [vpc\_cidr](#input\_vpc\_cidr) | CIDR block for the VPC | `string` | n/a | yes |
+| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the VPC where to create security group | `string` | n/a | yes |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_arn"></a> [arn](#output\_arn) | The ARN of the security group |
+| <a name="output_id"></a> [id](#output\_id) | The ID of the security group |
 
 ## Usage
 
-Here is examples of how you can use this module, we created 3 different type of groups i.e. open to public access, open to VPC traffic and DB security groups.
+Here is examples of how you can use this module, we created 2 different type of groups i.e. open to public access, and DB security groups.
 
 ### Security group with custom rules
 
-
-
 ```hcl
-# Configure the AWS Provider
-provider "aws" {
-  region = "ap-south-1"
-}
-
-locals {
-    vpc_cidr = var.vpc_cidr
-    vpc_id = var.vpc_id
-    public_subnets = var.public_subnets
-    private_subnets = var.private_subnets
-
-    nginx_service = {
-        ingress = [
-            {
-                description = "Nginx"
-                cidr_blocks = ["0.0.0.0/0"]
-                from_port = 80
-                to_port = 80
-                protocol = "tcp"
-            },
-            {
-                description = "Nginx_Secure"
-                cidr_blocks = ["0.0.0.0/0"]
-                from_port = 443
-                to_port = 443
-                protocol = "tcp"
-            },
-            {
-                description = "SSH"
-                cidr_blocks = ["0.0.0.0/0"]
-                from_port = 22
-                to_port = 22
-                protocol = "tcp"
-            }
-            ]
-        egress = [
-            {
-                description = "Internet open egress"
-                from_port   = 0
-                to_port     = 0
-                protocol    = "-1"
-                cidr_blocks = ["0.0.0.0/0"]
-            }
-            ]
-    }
-    rds_cluster = {
-        ingress = [
-            {
-                description = "Rds instances security groups"
-                cidr_blocks = [local.vpc_cidr]
-                from_port = 3306
-                to_port = 3306
-                protocol = "tcp"
-            }
-            ]
-        egress =[]
-    }
-    k8s_cluster = {
-        ingress = [
-            {
-                description = "k8s instances security groups"
-                cidr_blocks = ["0.0.0.0/0"]
-                from_port = 31000
-                to_port = 32000
-                protocol = "tcp"
-            },
-                {
-                description = "k8s instances security groups for public"
-                cidr_blocks = []
-                from_port = 5555
-                to_port = 5555
-                protocol = "tcp"
-                }
-
-            ]
-        egress =[]
-    }
-    internal = {
-        ingress = [
-            {
-                description = "Internal Api Port"
-                cidr_blocks = [local.vpc_cidr]
-                from_port = 80
-                to_port = 80
-                protocol = "tcp"
-            },
-            {
-                description = "Internal SSH Port"
-                cidr_blocks = [local.vpc_cidr]
-                from_port = 22
-                to_port = 22
-                protocol = "tcp"
-            },
-            {
-                description = "Internal Api Port HTTPS"
-                cidr_blocks = [local.vpc_cidr]
-                from_port = 443
-                to_port = 443
-                protocol = "tcp"
-            }
-            ]
-        egress = [
-            {
-                description = "Rds Client"
-                cidr_blocks = [local.vpc_cidr]
-                from_port = 3306
-                to_port = 3306
-                protocol = "tcp"
-            }
-        ]
-    }
-}
-
-
 module "sg_public" {
-    source = "../sg/"
-    vpc_cidr = local.vpc_cidr
-    vpc_id = local.vpc_id
-    ingress = local.nginx_service.ingress
-    egress = local.nginx_service.egress
-    name = "Public security group"
-    description = "Public secuirty group"
-    tags = "nginx_service"
+  source   = "../sg/"
+  vpc_cidr = var.vpc_cidr
+  vpc_id   = var.vpc_id
+  ingress = {
+    "http_rules_ingress" = {
+      description     = "For HTTP"
+      from_port       = 80
+      to_port         = 80
+      protocol        = "tcp"
+      cidr_blocks     = ["0.0.0.0/0"]
+      security_groups = []
+    },
+    "ssh_rules_ingress" = {
+      description     = "For SSH"
+      from_port       = 22
+      to_port         = 22
+      protocol        = "tcp"
+      cidr_blocks     = ["0.0.0.0/0"]
+      security_groups = []
+    }
+  }
+  egress = {
+    "Internet_open_egress" = {
+      description     = "Internet open egress"
+      from_port       = 0
+      to_port         = 0
+      protocol        = "-1"
+      cidr_blocks     = ["0.0.0.0/0"]
+      security_groups = []
+    }
+  }
+  name        = "Public security group"
+  description = "Public secuirty group"
+  tags = {
+    Terraform   = "true"
+    Environment = "dev"
+  }
 }
 
 
 module "sg_rds" {
-    source = "../sg/"
-    vpc_cidr = local.vpc_cidr
-    vpc_id = local.vpc_id
-    ingress = local.rds_cluster.ingress
-    egress = local.rds_cluster.egress
-    name = "RDS security group"
-    description = "RDS secuirty group"
-    tags = "sg_rd"
-    security_groups = ["sg-035962aecd67c9ec3"]
-}
-
-module "sg_internal" {
-    source = "../sg/"
-    vpc_cidr = local.vpc_cidr
-    vpc_id = local.vpc_id
-    ingress = local.internal.ingress
-    egress = local.internal.egress
-    name = "Private security group"
-    description = "Private secuirty group"
-    tags = "sg_internal"
-}
-module "sg_k8s" {
-    source = "../sg/"
-    vpc_cidr = local.vpc_cidr
-    vpc_id = local.vpc_id
-    ingress = local.k8s_cluster.ingress
-    egress = local.k8s_cluster.egress
-    name = "kubernates security group"
-    description = "kubernates secuirty group"
-    tags = "sg_k8s"
-    security_groups = ["sg-035962aecd67c9ec3"]
+  source   = "../sg/"
+  vpc_cidr = var.vpc_cidr
+  vpc_id   = var.vpc_id
+  ingress = {
+    "http_rules_ingress" = {
+      description     = "For HTTP"
+      from_port       = 3306
+      to_port         = 3306
+      protocol        = "tcp"
+      cidr_blocks     = []
+      security_groups = ["sg-035962aecd67def34"]
+    }
+  }
+  egress = {
+    "Internet_open_egress" = {
+      description     = "Internet RDS egress"
+      from_port       = 0
+      to_port         = 0
+      protocol        = "-1"
+      cidr_blocks     = ["0.0.0.0/0"]
+      security_groups = []
+    }
+  }
+  name        = "RDS security group"
+  description = "RDS secuirty group"
+  tags = {
+    Terraform   = "true"
+    Environment = "rds_dev"
+  }
 }
 
 ```
 
-variables.tf
-
-```hcl
-#####################################################
-# Variables
-#####################################################
-
-variable "region" {
-    type = string
-    default = "eu-west-1"
-    description = "(optional) describe your variable"
-}
 
 
-variable "vpc_cidr" {
-    type = string
-    default = "10.1.X.X/16"
-}
-variable "vpc_id" {
-    type = string
-    default =  "vpc-XXXXXXXXXXXX"
-}
-variable "public_subnets" {
-    type = list
-    default = ["10.1.X.X/19", "10.1.X.X/19"]
-}
-variable "private_subnets" {
-    type = list
-    default = ["10.1.X.X/19", "10.1.X.X/19"]
-}
-```
-
-## Outputs
-
-| Name                               | Description                  |
-| ---------------------------------- | ---------------------------- |
-| <a name="id"></a> [id](#output_id) | The ID of the security group |
