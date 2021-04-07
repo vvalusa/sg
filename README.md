@@ -80,7 +80,10 @@ module "sg_public" {
   }
   name        = "Public security group"
   description = "Public secuirty group"
-  tags        = "nginx_service"
+  tags = {
+    Terraform   = "true"
+    Environment = "dev"
+  }
 }
 
 
@@ -110,7 +113,10 @@ module "sg_rds" {
   }
   name        = "RDS security group"
   description = "RDS secuirty group"
-  tags        = "rds_sg"
+  tags = {
+    Terraform   = "true"
+    Environment = "rds_dev"
+  }
 }
 
 ```
